@@ -617,9 +617,18 @@
     const nextButton = document.getElementById("next-button");
     let currentQuestion = 0;
     let score = 0;
+    let questionOrder = [];
+
+    function shuffleQuestions() {
+      questionOrder = questions.map((_, index) => index);
+      for (let index = questionOrder.length - 1; index > 0; index -= 1) {
+        const randomIndex = Math.floor(Math.random() * (index + 1));
+        [questionOrder[index], questionOrder[randomIndex]] = [questionOrder[randomIndex], questionOrder[index]];
+      }
+    }
 
     function showQuestion() {
-      const item = questions[currentQuestion];
+      const item = questions[questionOrder[currentQuestion]];
       questionCount.textContent = `Pregunta ${currentQuestion + 1} de ${questions.length}`;
       questionTag.textContent = item.category;
       questionText.textContent = item.text;
@@ -639,7 +648,7 @@
     }
 
     function selectAnswer(selectedIndex) {
-      const item = questions[currentQuestion];
+      const item = questions[questionOrder[currentQuestion]];
       const buttons = [...answers.querySelectorAll(".answer")];
       buttons.forEach((button) => { button.disabled = true; });
       if (selectedIndex === item.answer) {
@@ -694,6 +703,7 @@
     }
 
     document.getElementById("start-button").addEventListener("click", () => {
+      shuffleQuestions();
       intro.hidden = true;
       quiz.hidden = false;
       showQuestion();
@@ -715,6 +725,7 @@
       scoreDisplay.textContent = "0";
       progressFill.style.width = "0";
       progressTrack.setAttribute("aria-valuenow", "0");
+      shuffleQuestions();
       result.hidden = true;
       quiz.hidden = false;
       showQuestion();
